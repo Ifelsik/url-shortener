@@ -1,7 +1,8 @@
 package url
 
-type URLRepository interface {
-	Add(url *URL) error
-	GetByShortKey(shortKey string) (*URL, error)
-}
+import "context"
 
+type URLRepository interface {
+	Add(ctx context.Context, url *URL) (*URL, error)
+	GetByShortKey(ctx context.Context, shortKey string) (*URL, error)
+}
