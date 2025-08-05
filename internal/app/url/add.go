@@ -11,12 +11,16 @@ import (
 
 type AddURLRequest struct {
 	OriginalURL string
-	ShortKey    string
 	UserToken   string
 }
 
+type AddURLResponse struct {
+	OriginalURL string
+	ShortURL    string
+}
+
 type AddURL interface {
-	Handle(ctx context.Context, request *AddURLRequest) error
+	Handle(ctx context.Context, request *AddURLRequest) (*AddURLResponse, error)
 }
 
 type addURL struct {
@@ -36,28 +40,34 @@ func NewAddURL(
 	}
 }
 
-func (a *addURL) Handle(ctx context.Context, request *AddURLRequest) error {
+func (a *addURL) Handle(ctx context.Context,
+		request *AddURLRequest) (*AddURLResponse, error) {
 	if request == nil {
-		return ErrEmptyRequest
+		return nil, ErrEmptyRequest
 	}
 	// TODO: add validation
 	user, err := a.userRepo.GetByToken(ctx, request.UserToken)
 	if err != nil {
-		return fmt.Errorf("add url: %w", err)
+		return nil, fmt.Errorf("add url: %w", err)
 	}
 
 	url := url.URL{
 		OriginalURL: request.OriginalURL,
-		ShortKey:    request.ShortKey,
 		User:        user.ID,
 		CreatedAt:   a.timingProvider.Now(),
 	}
 
 	// Realization doesn't need to know about URL in repository
-	_, err = a.urlRepo.Add(ctx, &url)
+	savedURL, err := a.urlRepo.Add(ctx, &url)
 	if err != nil {
-		return fmt.Errorf("add url: %w", err)
+		return nil, fmt.Errorf("add url: %w", err)
 	}
 
-	return nil
+	result := &AddURLResponse{
+		OriginalURL: savedURL.OriginalURL,
+		ShortURL:    savedURL.ShortKey,
+	}
+
+	// TODO: validate result
+	return result, nil
 }

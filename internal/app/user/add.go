@@ -40,5 +40,6 @@ func (a *addUser) Handle(ctx context.Context) (*AddUserResponse, error) {
 		return nil, fmt.Errorf("add user: %w", err)
 	}
 
+	// TODO: validator
 	return &AddUserResponse{UserToken: user.Token}, nil
 }
