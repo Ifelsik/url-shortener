@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/Ifelsik/url-shortener/internal/logger"
+	"github.com/Ifelsik/url-shortener/internal/pkg/logger"
 	"github.com/sirupsen/logrus"
 )
 
