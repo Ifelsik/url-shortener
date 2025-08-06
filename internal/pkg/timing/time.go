@@ -7,6 +7,7 @@ import "time"
 type Timing interface {
 	Now() time.Time
 	Since(start time.Time) time.Duration
+	AfterNow(d time.Duration) time.Time
 }
 
 // Struct timingProvider implements Timing
@@ -24,4 +25,8 @@ func (t *timingProvider) Now() time.Time {
 // Since returns duration since start
 func (t *timingProvider) Since(start time.Time) time.Duration {
 	return time.Since(start)
+}
+
+func (t *timingProvider) AfterNow(d time.Duration) time.Time {
+	return time.Now().Add(d)
 }
