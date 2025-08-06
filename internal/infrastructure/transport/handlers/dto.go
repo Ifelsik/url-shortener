@@ -15,3 +15,5 @@ type GetURLByShortResponse struct {
 }
 
 const UserTokenCookie = "user_id"
+
+const QueryShortURL = "short"
