@@ -13,3 +13,8 @@ type URLService struct {
 type UserService struct {
 	AddUser user.AddUser
 }
+
+type Services struct {
+	URLService  *URLService
+	UserService *UserService
+}
