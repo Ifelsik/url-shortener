@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Ifelsik/url-shortener/internal/app"
@@ -10,8 +11,8 @@ import (
 )
 
 type HTTPServer struct {
-	Host   string
-	Port   string
+	host   string
+	port   string
 	srv    *http.Server
 	logger logger.Logger
 }
@@ -31,7 +32,11 @@ func NewHTTPServer(
 	}
 }
 
+func (s *HTTPServer) Shutdown() error {
+	return s.srv.Shutdown(context.Background())
+}
+
 func (s *HTTPServer) ListenAndServe() error {
-	s.logger.Infof("Server started on %s:%s", s.Host, s.Port)
+	s.logger.Infof("Server started on %s:%s", s.host, s.port)
 	return s.srv.ListenAndServe()
 }

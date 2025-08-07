@@ -27,7 +27,8 @@ func Router(
 	r.HandleFunc("/url", urlHandlers.GetOriginalURL).Methods("GET")
 
 	// set up middleware
-	r.Use(middleware.PanicRecoveryMiddleware)
+	panicMiddleware := middleware.NewPanicRecoveryMiddleware(log)
+	r.Use(panicMiddleware.Middleware)
 
 	logMiddleware := middleware.NewLoggingMiddleware(log, id, timing)
 	r.Use(logMiddleware.Middleware)

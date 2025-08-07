@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"github.com/Ifelsik/url-shortener/internal/pkg/logger"
 	"github.com/sirupsen/logrus"
 )
 
@@ -26,7 +25,7 @@ func initDefault() *LogrusLogWrap {
 	}
 }
 
-func NewLogrusLogWrap(conf *logger.LoggerConfig) *LogrusLogWrap {
+func NewLogrusLogWrap(conf *LoggerConfig) *LogrusLogWrap {
 	// default logger
 	if conf == nil {
 		return initDefault()
@@ -37,7 +36,7 @@ func NewLogrusLogWrap(conf *logger.LoggerConfig) *LogrusLogWrap {
 	return initDefault()
 }
 
-func (l *LogrusLogWrap) WithFields(fields logger.LoggerFields) *LogrusLogWrap {
+func (l *LogrusLogWrap) WithFields(fields LoggerFields) Logger {
 	return &LogrusLogWrap{log: l.log.WithFields(logrus.Fields(fields))}
 }
 
