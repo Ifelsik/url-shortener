@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
+	"runtime"
 
 	"github.com/Ifelsik/url-shortener/internal/pkg/logger"
 )
@@ -20,8 +22,18 @@ func (p *PanicRecoveryMiddleware) Middleware(handler http.Handler) http.Handler 
 			if err := recover(); err != nil {
 				p.log.Errorf("Panic recovered: %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
+				
+				buf := make([]byte, 1024)
+				n := runtime.Stack(buf, false)
+				for n == len(buf) {
+					buf = make([]byte, len(buf)*2)
+					n = runtime.Stack(buf, false)
+				}
+				fmt.Printf("Stack trace: %s\n", buf[:n])
 			}
 		}()
 		handler.ServeHTTP(w, r)
 	})
 }
+
+
