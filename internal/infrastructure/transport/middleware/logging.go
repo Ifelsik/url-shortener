@@ -38,9 +38,8 @@ func (m *LoggingMiddleware) Middleware(next http.Handler) http.Handler {
 		startTime := m.timeProvider.Now()
 		next.ServeHTTP(w, r.WithContext(ctxWithLogger))
 		elapsedTime := m.timeProvider.Since(startTime)
-		m.log = m.log.WithFields(logger.LoggerFields{
+		m.log.WithFields(logger.LoggerFields{
 			"elapsed": elapsedTime,
-		})
-		m.log.Debugf("request served")
+		}).Infof("request served")
 	})
 }

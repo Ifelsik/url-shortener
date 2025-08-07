@@ -18,10 +18,12 @@ type UserHandlers struct {
 func NewUserHandlers(
 	userService *app.UserService,
 	logger logger.Logger,
+	timeProvider timing.Timing,
 ) *UserHandlers {
 	return &UserHandlers{
 		log:         logger,
 		userService: userService,
+		timeProvider: timeProvider,
 	}
 }
 
