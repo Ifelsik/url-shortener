@@ -18,6 +18,7 @@ func NewValidator() *validate {
 		"url_without_scheme", validateURLWithoutScheme); err != nil {
 		panic(err)
 	}
+
 	return &v
 }
 
@@ -40,5 +41,6 @@ func validateURLWithoutScheme(fl govalidator.FieldLevel) bool {
 	}
 
 	_, err = url.ParseRequestURI(u)
+	
 	return err == nil
 }

@@ -2,7 +2,7 @@ package url
 
 import "time"
 
-// Struct URL represents entity of short url
+// Struct URL represents entity of short url.
 type URL struct {
 	ID          uint64
 	OriginalURL string

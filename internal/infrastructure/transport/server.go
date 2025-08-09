@@ -3,6 +3,7 @@ package transport
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/Ifelsik/url-shortener/internal/app"
 	"github.com/Ifelsik/url-shortener/internal/pkg/identifier"
@@ -24,9 +25,11 @@ func NewHTTPServer(
 	tp timing.Timing,
 ) *HTTPServer {
 	mux := Router(app, log, ip, tp)
+	
 	return &HTTPServer{
 		srv: &http.Server{
 			Handler: mux,
+			ReadHeaderTimeout: 5 * time.Second,
 		},
 		logger: log,
 	}
@@ -38,5 +41,6 @@ func (s *HTTPServer) Shutdown() error {
 
 func (s *HTTPServer) ListenAndServe() error {
 	s.logger.Infof("Server started on %s:%s", s.host, s.port)
+
 	return s.srv.ListenAndServe()
 }

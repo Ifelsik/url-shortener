@@ -26,7 +26,7 @@ type Logger interface {
 	Warningf(format string, args ...any)
 	Errorf(format string, args ...any)
 	Fatalf(format string, args ...any)
-	WithFields(LoggerFields) Logger
+	WithFields(f LoggerFields) Logger
 }
 
 type loggerCtxKey string
@@ -44,5 +44,6 @@ func FromContext(ctx context.Context) (Logger, error) {
 	if logger == nil || !ok {
 		return nil, ErrNoLoggerInCtx
 	}
+	
 	return logger, nil
 }

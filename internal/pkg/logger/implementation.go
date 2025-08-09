@@ -98,11 +98,13 @@ func (l *LogrusLogWrap) Fatalf(format string, args ...any) {
 func (l *LogrusLogWrap) withCaller() *logrus.Entry {
 	if pc, file, line, ok := runtime.Caller(2); ok {
 		funcName := runtime.FuncForPC(pc).Name()
+
 		return l.log.WithFields(logrus.Fields{
 			"func":  funcName,
 			"place": fmt.Sprintf("%s:%d", file, line),
 		})
 	}
 	l.log.Warningln("LogrusLogWrap: unable to get caller info")
+	
 	return l.log
 }

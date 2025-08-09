@@ -1,3 +1,4 @@
+//nolint:dupl
 package memory
 
 import (
@@ -28,6 +29,7 @@ func (s *userStorage) Add(ctx context.Context,
 	user.ID = s.id
 	s.id++
 	s.users[user.Token] = user
+
 	return user, nil
 }
 
@@ -37,5 +39,6 @@ func (s *userStorage) GetByToken(ctx context.Context,
 	if !ok {
 		return nil, ErrNoUser
 	}
+
 	return user, nil
 }

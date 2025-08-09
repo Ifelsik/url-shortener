@@ -1,6 +1,17 @@
 version: "2"
 linters:
-  default: standard
+  default: all
+  disable:
+    - depguard
+    - mnd
+    - revive
+    - wsl
+    - wsl_v5
+    - ireturn
+    - funlen
+    - varnamelen
+    - wrapcheck
+    - noinlineerr
   exclusions:
     rules:
       - path-except: _test\.go

@@ -28,7 +28,8 @@ func NewUserHandlers(
 }
 
 func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
-	if log, err := logger.FromContext(r.Context()); err == nil {
+	log, err := logger.FromContext(r.Context()) 
+	if err == nil {
 		h.log = log
 	} else {
 		h.log.Warningf("AddUser http handler: %v", err)
@@ -38,6 +39,7 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		h.log.Debugf("AddUser http handler: got user token: %s", tokenCookie.Value)
 		w.WriteHeader(http.StatusOK)
+
 		return
 	}
 	// TODO: refresh user token
@@ -47,6 +49,7 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.log.Errorf("AddUser http handler: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		
 		return
 	}
 

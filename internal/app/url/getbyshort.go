@@ -37,7 +37,8 @@ func (g *getURLByShort) Handle(ctx context.Context,
 		return nil, ErrEmptyRequest // strange error
 	}
 
-	if err := g.val.ValidateStruct(request); err != nil {
+	err := g.val.ValidateStruct(request);
+	if err != nil {
 		return nil, fmt.Errorf("get url by short key: %w", err)
 	}
 
