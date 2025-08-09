@@ -4,3 +4,6 @@ run:
 format:
 	go fmt ./...
 	@echo Source code formatted!
+
+lint:
+	golangci-lint run

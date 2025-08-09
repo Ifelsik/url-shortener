@@ -41,7 +41,7 @@ func (g *getURLByShort) Handle(ctx context.Context,
 		return nil, fmt.Errorf("get url by short key: %w", err)
 	}
 
-	var shortKeyURL string = request.ShortKey
+	var shortKeyURL = request.ShortKey
 	url, err := g.urlRepo.GetByShortKey(ctx, shortKeyURL)
 	if err != nil {
 		return nil, fmt.Errorf("get url by short key: %w", err)

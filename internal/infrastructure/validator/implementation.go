@@ -14,7 +14,10 @@ func NewValidator() *validate {
 	v := validate{
 		validator: govalidator.New(),
 	}
-	v.validator.RegisterValidation("url_without_scheme", validateURLWithoutScheme)
+	if err := v.validator.RegisterValidation(
+		"url_without_scheme", validateURLWithoutScheme); err != nil {
+		panic(err)
+	}
 	return &v
 }
 

@@ -34,14 +34,18 @@ func (h *URLHandlers) AddShortURL(w http.ResponseWriter, r *http.Request) {
 	h.logger.Debugf("Reading request body")
 	var body bytes.Buffer
 	_, err := body.ReadFrom(r.Body)
-	defer r.Body.Close()
+
+	defer func(){ 
+			_ = r.Body.Close() 
+		}()
+
 	if err != nil {
 		h.logger.Errorf("AddShortURL http handler: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	h.logger.Debugf("Unmarshalling request body")
+	h.logger.Debugf("Unmarshaling request body")
 	jsonBody := new(AddURLRequest)
 	err = json.Unmarshal(body.Bytes(), jsonBody)
 	if err != nil {
@@ -90,9 +94,13 @@ func (h *URLHandlers) AddShortURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.logger.Debugf("Writing response")
+	if _, err = w.Write(responseJSON); err != nil {
+		h.logger.Errorf("AddShortURL http handler: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	w.Write(responseJSON)
 }
 
 func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
@@ -138,7 +146,11 @@ func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.logger.Debugf("GetOriginalURL http handler: write response")
+	if _, err = w.Write(responseJSON); err != nil {
+		h.logger.Errorf("GetOriginalURL http handler: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseJSON)
 }

@@ -44,5 +44,5 @@ func main() {
 	}
 
 	httpServer := transport.NewHTTPServer(&App, log, id, tp)
-	httpServer.ListenAndServe()
+	_ = httpServer.ListenAndServe()
 }
