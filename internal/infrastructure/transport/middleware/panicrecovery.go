@@ -22,7 +22,7 @@ func (p *PanicRecoveryMiddleware) Middleware(handler http.Handler) http.Handler 
 			if err := recover(); err != nil {
 				p.log.Errorf("Panic recovered: %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
-				
+
 				buf := make([]byte, 1024)
 				n := runtime.Stack(buf, false)
 				for n == len(buf) {
@@ -35,5 +35,3 @@ func (p *PanicRecoveryMiddleware) Middleware(handler http.Handler) http.Handler 
 		handler.ServeHTTP(w, r)
 	})
 }
-
-

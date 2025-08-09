@@ -1,12 +1,12 @@
 package transport
 
 import (
+	"github.com/Ifelsik/url-shortener/internal/app"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/transport/handlers"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/transport/middleware"
 	"github.com/Ifelsik/url-shortener/internal/pkg/identifier"
 	"github.com/Ifelsik/url-shortener/internal/pkg/logger"
 	"github.com/Ifelsik/url-shortener/internal/pkg/timing"
-	"github.com/Ifelsik/url-shortener/internal/app"
 
 	"github.com/gorilla/mux"
 )

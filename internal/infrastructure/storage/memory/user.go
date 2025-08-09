@@ -22,7 +22,7 @@ func NewUserStorage() *userStorage {
 }
 
 func (s *userStorage) Add(ctx context.Context,
-		user *user.User) (*user.User, error) {
+	user *user.User) (*user.User, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	user.ID = s.id
@@ -32,7 +32,7 @@ func (s *userStorage) Add(ctx context.Context,
 }
 
 func (s *userStorage) GetByToken(ctx context.Context,
-		token string) (*user.User, error) {
+	token string) (*user.User, error) {
 	user, ok := s.users[token]
 	if !ok {
 		return nil, ErrNoUser

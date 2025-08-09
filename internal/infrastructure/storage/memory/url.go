@@ -30,8 +30,8 @@ func (s *urlStorage) Add(ctx context.Context, url *url.URL) (*url.URL, error) {
 	return url, nil
 }
 
-func (s *urlStorage) GetByShortKey(ctx context.Context, 
-		shortKey string) (*url.URL, error) {
+func (s *urlStorage) GetByShortKey(ctx context.Context,
+	shortKey string) (*url.URL, error) {
 	url, ok := s.urls[shortKey]
 	if !ok {
 		return nil, ErrNoURL

@@ -4,6 +4,7 @@ import (
 	"github.com/Ifelsik/url-shortener/internal/app"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/storage/memory"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/transport"
+	"github.com/Ifelsik/url-shortener/internal/infrastructure/validator"
 	"github.com/Ifelsik/url-shortener/internal/pkg/base62"
 	"github.com/Ifelsik/url-shortener/internal/pkg/hasher"
 	"github.com/Ifelsik/url-shortener/internal/pkg/identifier"
@@ -22,18 +23,20 @@ func main() {
 	tp := timing.NewTimingProvider()
 	b62 := base62.NewBase62Encoder()
 	id := identifier.NewUUIDProvider()
-	hasher := hasher.New128()
+	hasher := hasher.NewHasher32()
+	valid := validator.NewValidator()
 
 	App := app.Services{
 		URLService: &app.URLService{
-			AddURL:     appUrl.NewAddURL(
+			AddURL: appUrl.NewAddURL(
 				urlStorage,
 				userStorage,
 				tp,
 				b62,
 				hasher,
+				valid,
 			),
-			GetByShort: appUrl.NewGetURLByShortKey(urlStorage),
+			GetByShort: appUrl.NewGetURLByShortKey(urlStorage, valid),
 		},
 		UserService: &app.UserService{
 			AddUser: appUser.NewAddUser(userStorage, tp),

@@ -21,8 +21,8 @@ func NewUserHandlers(
 	timeProvider timing.Timing,
 ) *UserHandlers {
 	return &UserHandlers{
-		log:         logger,
-		userService: userService,
+		log:          logger,
+		userService:  userService,
 		timeProvider: timeProvider,
 	}
 }
@@ -55,10 +55,10 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 		Name:     UserTokenCookie,
 		Value:    newUser.UserToken,
 		HttpOnly: true,
-		Expires: h.timeProvider.AfterNow(30 * 24 * time.Hour),
+		Expires:  h.timeProvider.AfterNow(30 * 24 * time.Hour),
 	}
 
 	h.log.Debugf("AddUser http handler: setting cookie")
 	http.SetCookie(w, userTokenCookie)
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 }

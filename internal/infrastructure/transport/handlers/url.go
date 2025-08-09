@@ -86,11 +86,11 @@ func (h *URLHandlers) AddShortURL(w http.ResponseWriter, r *http.Request) {
 
 	h.logger.Debugf("Writing response")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 	w.Write(responseJSON)
 }
 
-func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {	
+func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
 	if log, err := logger.FromContext(r.Context()); err == nil {
 		h.logger = log
 	} else {
@@ -112,11 +112,11 @@ func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
 
 	shortURL := queries.Get(QueryShortURL)
 	h.logger.Debugf("GetOriginalURL http handler: got short url: %s", shortURL)
-	
+
 	getOriginalURLReq := &url.GetURLByShortRequest{
 		ShortKey: shortURL,
 	}
-	getOriginalURLResp, err := 
+	getOriginalURLResp, err :=
 		h.urlService.GetByShort.Handle(r.Context(), getOriginalURLReq)
 	if err != nil {
 		h.logger.Errorf("GetOriginalURL http handler: %v", err)
