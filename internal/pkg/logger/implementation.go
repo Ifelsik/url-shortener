@@ -28,7 +28,6 @@ func initDefault() *LogrusLogWrap {
 	// because usage of default Report caller
 	// will show information about wrapping function
 	l.ReportCaller = false
-	
 
 	return &LogrusLogWrap{
 		log: logrus.NewEntry(l),
@@ -51,7 +50,7 @@ func NewLogrusLogWrap(conf *LoggerConfig) *LogrusLogWrap {
 
 func (l *LogrusLogWrap) WithFields(fields LoggerFields) Logger {
 	return &LogrusLogWrap{
-		log: l.log.WithFields(logrus.Fields(fields)),
+		log:  l.log.WithFields(logrus.Fields(fields)),
 		conf: l.conf,
 	}
 }
@@ -97,7 +96,7 @@ func (l *LogrusLogWrap) Fatalf(format string, args ...any) {
 }
 
 func (l *LogrusLogWrap) withCaller() *logrus.Entry {
-	if pc, file, line, ok := runtime.Caller(3); ok {
+	if pc, file, line, ok := runtime.Caller(2); ok {
 		funcName := runtime.FuncForPC(pc).Name()
 		return l.log.WithFields(logrus.Fields{
 			"func":  funcName,

@@ -5,10 +5,11 @@ import (
 	"fmt"
 
 	"github.com/Ifelsik/url-shortener/internal/domain/url"
+	"github.com/Ifelsik/url-shortener/internal/pkg/validator"
 )
 
 type GetURLByShortRequest struct {
-	ShortKey string
+	ShortKey string `validate:"required"`
 }
 
 type GetURLByShortResponse struct {
@@ -23,16 +24,21 @@ type GetURLByShort interface {
 
 type getURLByShort struct {
 	urlRepo url.URLRepository
+	val     validator.Validator
 }
 
-func NewGetURLByShortKey(urlRepo url.URLRepository) *getURLByShort {
-	return &getURLByShort{urlRepo: urlRepo}
+func NewGetURLByShortKey(urlRepo url.URLRepository, val validator.Validator) *getURLByShort {
+	return &getURLByShort{urlRepo: urlRepo, val: val}
 }
 
 func (g *getURLByShort) Handle(ctx context.Context,
 	request *GetURLByShortRequest) (*GetURLByShortResponse, error) {
 	if request == nil {
-		return nil, ErrEmptyRequest
+		return nil, ErrEmptyRequest // strange error
+	}
+
+	if err := g.val.ValidateStruct(request); err != nil {
+		return nil, fmt.Errorf("get url by short key: %w", err)
 	}
 
 	var shortKeyURL string = request.ShortKey
@@ -41,11 +47,10 @@ func (g *getURLByShort) Handle(ctx context.Context,
 		return nil, fmt.Errorf("get url by short key: %w", err)
 	}
 
-	// TODO: probably need to add a validation
 	result := &GetURLByShortResponse{
 		ShortURL:    url.ShortKey,
 		OriginalURL: url.OriginalURL,
 	}
-	
+
 	return result, nil
 }

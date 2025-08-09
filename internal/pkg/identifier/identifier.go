@@ -6,7 +6,7 @@ import "github.com/google/uuid"
 // for generating unique identifiers
 type Identifier interface {
 	String() string
-}	
+}
 
 // struct uuidProvider implements Identifier via UUID
 type uuidProvider struct{}
