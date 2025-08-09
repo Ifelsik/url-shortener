@@ -8,6 +8,11 @@ import (
 	"github.com/Ifelsik/url-shortener/internal/app"
 	"github.com/Ifelsik/url-shortener/internal/app/url"
 	"github.com/Ifelsik/url-shortener/internal/pkg/logger"
+	"github.com/gorilla/mux"
+)
+
+const (
+	ShortURLSlug = "key"
 )
 
 type URLHandlers struct {
@@ -97,20 +102,14 @@ func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
 		h.logger.Warningf("GetOriginalURL http handler: %v", err)
 	}
 
-	if r.URL == nil {
-		h.logger.Errorf("GetOriginalURL http handler: r.URL is nil")
+	vars := mux.Vars(r)
+	shortURL, ok := vars[ShortURLSlug]
+	if !ok {
+		h.logger.Errorf("GetOriginalURL http handler: %s var is empty", ShortURLSlug)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	queries := r.URL.Query()
-	if !queries.Has(QueryShortURL) {
-		h.logger.Errorf("GetOriginalURL http handler: %s query is empty", QueryShortURL)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	shortURL := queries.Get(QueryShortURL)
 	h.logger.Debugf("GetOriginalURL http handler: got short url: %s", shortURL)
 
 	getOriginalURLReq := &url.GetURLByShortRequest{

@@ -1,6 +1,8 @@
 package transport
 
 import (
+	"fmt"
+
 	"github.com/Ifelsik/url-shortener/internal/app"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/transport/handlers"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/transport/middleware"
@@ -24,7 +26,9 @@ func Router(
 
 	r.HandleFunc("/user", userHandlers.AddUser).Methods("POST")
 	r.HandleFunc("/url", urlHandlers.AddShortURL).Methods("POST")
-	r.HandleFunc("/url", urlHandlers.GetOriginalURL).Methods("GET")
+	r.HandleFunc(
+		fmt.Sprintf("/{%s}", handlers.ShortURLSlug),
+		urlHandlers.GetOriginalURL).Methods("GET")
 
 	// set up middleware
 	panicMiddleware := middleware.NewPanicRecoveryMiddleware(log)
