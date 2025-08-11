@@ -103,6 +103,5 @@ func prepareURL(url string) string {
 		// 'https' is considered as default scheme
 		return "https://" + url
 	}
-
 	return url
 }
