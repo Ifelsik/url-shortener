@@ -1,6 +1,12 @@
 package main
 
 import (
+	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/Ifelsik/url-shortener/internal/app"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/storage/memory"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/transport"
@@ -16,6 +22,11 @@ import (
 )
 
 func main() {
+	exit := make(chan os.Signal, 1)
+
+	// syscall.SIGTERM is send by docker.
+	signal.Notify(exit, os.Interrupt, syscall.SIGTERM)
+
 	userStorage := memory.NewUserStorage()
 	urlStorage := memory.NewURLStorage()
 
@@ -44,5 +55,19 @@ func main() {
 	}
 
 	httpServer := transport.NewHTTPServer(&App, log, id, tp)
-	_ = httpServer.ListenAndServe()
+
+	go func() {
+		err := httpServer.ListenAndServe()
+		if err != http.ErrServerClosed {
+			log.Fatalf("http server error: %v", err)
+		}
+	}()
+
+	<-exit
+	
+	log.Infof("got shutdown signal, shutting down server...")
+
+	_ = httpServer.Shutdown(context.Background())
+
+	log.Infof("server stopped")
 }
