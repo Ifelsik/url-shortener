@@ -62,7 +62,8 @@ func (a *addURL) Handle(ctx context.Context,
 		return nil, ErrEmptyRequest
 	}
 
-	if err := a.validator.ValidateStruct(request); err != nil {
+	err := a.validator.ValidateStruct(request)
+	if err != nil {
 		return nil, fmt.Errorf("add url: %w", err)
 	}
 
@@ -93,7 +94,6 @@ func (a *addURL) Handle(ctx context.Context,
 		ShortURL:    savedURL.ShortKey,
 	}
 
-	// TODO: validate result
 	return result, nil
 }
 

@@ -1,0 +1,20 @@
+version: "2"
+linters:
+  default: all
+  disable:
+    - depguard
+    - mnd
+    - revive
+    - wsl
+    - wsl_v5
+    - ireturn
+    - funlen
+    - varnamelen
+    - wrapcheck
+    - noinlineerr
+    - nlreturn
+  exclusions:
+    rules:
+      - path-except: _test\.go
+        linters:
+          - forbidigo

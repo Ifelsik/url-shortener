@@ -1,3 +1,4 @@
+//nolint:dupl
 package memory
 
 import (
@@ -27,6 +28,7 @@ func (s *urlStorage) Add(ctx context.Context, url *url.URL) (*url.URL, error) {
 	url.ID = s.id
 	s.id++
 	s.urls[url.ShortKey] = url
+
 	return url, nil
 }
 
@@ -36,5 +38,6 @@ func (s *urlStorage) GetByShortKey(ctx context.Context,
 	if !ok {
 		return nil, ErrNoURL
 	}
+
 	return url, nil
 }

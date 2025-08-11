@@ -10,12 +10,19 @@ type LoggerFields map[string]any
 // Formatter types.
 // TextFormatter is recommended for TTY output.
 const (
-	TextFormatter = 0
-	JSONFormatter = 1
+	TextFormatter = iota + 1
+	JSONFormatter
+)
+
+const (
+	LevelError = iota + 1
+	LevelWarning
+	LevelInfo
+	LevelDebug
 )
 
 type LoggerConfig struct {
-	Level      uint8 // TODO: add levels
+	Level      uint8
 	Formatter  uint8
 	ShowCaller bool
 }
@@ -26,7 +33,7 @@ type Logger interface {
 	Warningf(format string, args ...any)
 	Errorf(format string, args ...any)
 	Fatalf(format string, args ...any)
-	WithFields(LoggerFields) Logger
+	WithFields(f LoggerFields) Logger
 }
 
 type loggerCtxKey string
@@ -44,5 +51,6 @@ func FromContext(ctx context.Context) (Logger, error) {
 	if logger == nil || !ok {
 		return nil, ErrNoLoggerInCtx
 	}
+	
 	return logger, nil
 }
