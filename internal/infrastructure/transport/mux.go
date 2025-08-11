@@ -21,7 +21,7 @@ func Router(
 ) *mux.Router {
 	r := mux.NewRouter()
 
-	userHandlers := handlers.NewUserHandlers(appSrv.UserService, log, timing)
+	userHandlers := handlers.NewUserHandlers(appSrv.UserService, log)
 	urlHandlers := handlers.NewURLHandlers(appSrv.URLService, log)
 
 	r.HandleFunc("/user", userHandlers.AddUser).Methods("POST")

@@ -2,28 +2,24 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/Ifelsik/url-shortener/internal/app"
+	"github.com/Ifelsik/url-shortener/internal/app/user"
 	"github.com/Ifelsik/url-shortener/internal/pkg/logger"
-	"github.com/Ifelsik/url-shortener/internal/pkg/timing"
 )
 
 type UserHandlers struct {
 	log          logger.Logger
 	userService  *app.UserService
-	timeProvider timing.Timing
 }
 
 func NewUserHandlers(
 	userService *app.UserService,
 	logger logger.Logger,
-	timeProvider timing.Timing,
 ) *UserHandlers {
 	return &UserHandlers{
 		log:          logger,
 		userService:  userService,
-		timeProvider: timeProvider,
 	}
 }
 
@@ -36,16 +32,18 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tokenCookie, err := r.Cookie(UserTokenCookie)
-	if err == nil {
-		h.log.Debugf("AddUser http handler: got user token: %s", tokenCookie.Value)
-		w.WriteHeader(http.StatusOK)
-
-		return
+	if err != nil {
+		h.log.Debugf("AddUser http handler: %w", err)
+		w.WriteHeader(http.StatusBadRequest)
 	}
-	// TODO: refresh user token
 
 	h.log.Debugf("AddUser http handler: creating new user")
-	newUser, err := h.userService.AddUser.Handle(r.Context())
+	user, err := h.userService.AddUser.Handle(
+		r.Context(),
+		&user.AddUserRequest{
+			UserToken: tokenCookie.Value,
+		},
+	)
 	if err != nil {
 		h.log.Errorf("AddUser http handler: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -56,9 +54,9 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 	h.log.Debugf("AddUser http handler: forming cookie")
 	userTokenCookie := &http.Cookie{
 		Name:     UserTokenCookie,
-		Value:    newUser.UserToken,
+		Value:    user.UserToken,
 		HttpOnly: true,
-		Expires:  h.timeProvider.AfterNow(30 * 24 * time.Hour),
+		Expires:  user.ExpiresAt,
 	}
 
 	h.log.Debugf("AddUser http handler: setting cookie")

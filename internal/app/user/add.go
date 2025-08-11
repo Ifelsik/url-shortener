@@ -3,18 +3,24 @@ package user
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/Ifelsik/url-shortener/internal/domain/user"
 	"github.com/Ifelsik/url-shortener/internal/pkg/identifier"
 	"github.com/Ifelsik/url-shortener/internal/pkg/timing"
 )
 
-type AddUserResponse struct {
+type AddUserRequest struct {
 	UserToken string
 }
 
+type AddUserResponse struct {
+	UserToken string
+	ExpiresAt time.Time
+}
+
 type AddUser interface {
-	Handle(ctx context.Context) (*AddUserResponse, error)
+	Handle(ctx context.Context, request *AddUserRequest) (*AddUserResponse, error)
 }
 
 type addUser struct {
@@ -27,12 +33,21 @@ func NewAddUser(userRepo user.UserRepository, timing timing.Timing) *addUser {
 	return &addUser{userRepo: userRepo, timing: timing, identifier: identifier.NewUUIDProvider()}
 }
 
-func (a *addUser) Handle(ctx context.Context) (*AddUserResponse, error) {
-	user, err := a.userRepo.Add(
+func (a *addUser) Handle(
+	ctx context.Context,
+	request *AddUserRequest,
+	) (*AddUserResponse, error) {
+	existentUser, err := a.userRepo.GetByToken(ctx, request.UserToken)
+	if err == nil {
+		return &AddUserResponse{UserToken: existentUser.Token}, nil
+	}
+
+	newUser, err := a.userRepo.Add(
 		ctx,
 		&user.User{
 			Token:     a.identifier.String(),
 			CreatedAt: a.timing.Now(),
+			ExpiresAt: a.timing.Now().Add(30 * 24 * time.Hour),
 		},
 	)
 
@@ -40,5 +55,5 @@ func (a *addUser) Handle(ctx context.Context) (*AddUserResponse, error) {
 		return nil, fmt.Errorf("add user: %w", err)
 	}
 
-	return &AddUserResponse{UserToken: user.Token}, nil
+	return &AddUserResponse{UserToken: newUser.Token}, nil
 }
