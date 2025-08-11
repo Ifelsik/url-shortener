@@ -12,6 +12,7 @@ linters:
     - varnamelen
     - wrapcheck
     - noinlineerr
+    - nlreturn
   exclusions:
     rules:
       - path-except: _test\.go

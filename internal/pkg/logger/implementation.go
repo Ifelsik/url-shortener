@@ -7,12 +7,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Used as default.
+//nolint:gochecknoglobals
+var stdLoggerConfig = LoggerConfig{
+	Formatter:  TextFormatter,
+	Level:      LevelInfo,
+	ShowCaller: true,
+}
+
 type LogrusLogWrap struct {
 	log  *logrus.Entry
 	conf *LoggerConfig
 }
 
-func initDefault() *LogrusLogWrap {
+func configureLogger(conf *LoggerConfig) *LogrusLogWrap {
 	l := logrus.New()
 	l.SetFormatter(
 		&logrus.TextFormatter{
@@ -22,8 +30,22 @@ func initDefault() *LogrusLogWrap {
 			PadLevelText:           true,
 		},
 	)
-	// TODO: implement configuration for logger
-	l.SetLevel(logrus.DebugLevel)
+	
+	var level logrus.Level
+	switch conf.Level {
+	case LevelError:
+		level = logrus.ErrorLevel
+	case LevelWarning:
+		level = logrus.WarnLevel
+	case LevelInfo:
+		level = logrus.InfoLevel
+	case LevelDebug:
+		level = logrus.DebugLevel
+	default:
+		level = logrus.InfoLevel
+	}
+	l.SetLevel(level)
+	
 	// Need to set custom report caller
 	// because usage of default Report caller
 	// will show information about wrapping function
@@ -31,21 +53,15 @@ func initDefault() *LogrusLogWrap {
 
 	return &LogrusLogWrap{
 		log: logrus.NewEntry(l),
-		conf: &LoggerConfig{
-			ShowCaller: true,
-		},
+		conf: conf,
 	}
 }
 
 func NewLogrusLogWrap(conf *LoggerConfig) *LogrusLogWrap {
-	// default logger
 	if conf == nil {
-		return initDefault()
+		conf = &stdLoggerConfig
 	}
-
-	// TODO: add logger parameters from configuration
-	// Temporary default is used
-	return initDefault()
+	return configureLogger(conf)
 }
 
 func (l *LogrusLogWrap) WithFields(fields LoggerFields) Logger {
