@@ -35,11 +35,16 @@ func (m *LoggingMiddleware) Middleware(next http.Handler) http.Handler {
 		})
 		m.log.Debugf("got request")
 		ctxWithLogger := logger.ToContext(r.Context(), m.log)
+
+		srw := NewStatusResponseWriter(w)
+
 		startTime := m.timeProvider.Now()
-		next.ServeHTTP(w, r.WithContext(ctxWithLogger))
+		next.ServeHTTP(srw, r.WithContext(ctxWithLogger))
 		elapsedTime := m.timeProvider.Since(startTime)
+
 		m.log.WithFields(logger.LoggerFields{
 			"elapsed": elapsedTime,
+			"code":  srw.Status,
 		}).Infof("request served")
 	})
 }
