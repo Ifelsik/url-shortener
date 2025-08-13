@@ -123,3 +123,8 @@ func (l *LogrusLogWrap) withCaller() *logrus.Entry {
 	
 	return l.log
 }
+
+func (l *LogrusLogWrap) LoadConfig(conf LoggerConfig) {
+	l.conf = &conf
+	// TODO: refactor code in logger
+}

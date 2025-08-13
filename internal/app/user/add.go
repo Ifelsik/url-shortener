@@ -31,7 +31,6 @@ type addUser struct {
 
 func NewAddUser(userRepo user.UserRepository, timing timing.Timing) *addUser {
 	return &addUser{userRepo: userRepo, timing: timing, identifier: identifier.NewUUIDProvider()}
-	return &addUser{userRepo: userRepo, timing: timing, identifier: identifier.NewUUIDProvider()}
 }
 
 func (a *addUser) Handle(

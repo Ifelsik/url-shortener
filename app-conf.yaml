@@ -1,0 +1,22 @@
+server:
+  host: ${SERVER_HOST}
+  port: ${SERVER_PORT}
+
+database:
+  # can be postgres or memory
+  # if type is memory, other parameters are ignored
+  type: ${DATABASE_TYPE}
+
+  host: ${DATABASE_HOST}
+  port: ${DATABASE_PORT}
+  user: ${DATABASE_USER}
+  password: ${DATABASE_PASSWORD}
+  name: ${DATABASE_NAME}
+
+logger:
+  # available options: error, warning, info, debug
+  level: "debug"
+
+  # available options: text, json
+  formatter: "text"
+  showCaller: true

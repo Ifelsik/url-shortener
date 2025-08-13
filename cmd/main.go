@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/Ifelsik/url-shortener/internal/app"
+	"github.com/Ifelsik/url-shortener/internal/infrastructure/config"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/storage/memory"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/transport"
 	"github.com/Ifelsik/url-shortener/internal/infrastructure/validator"
@@ -27,15 +29,22 @@ func main() {
 	// syscall.SIGTERM is send by docker.
 	signal.Notify(exit, os.Interrupt, syscall.SIGTERM)
 
-	userStorage := memory.NewUserStorage()
-	urlStorage := memory.NewURLStorage()
-
 	log := logger.NewLogrusLogWrap(nil)
 	tp := timing.NewTimingProvider()
 	b62 := base62.NewBase62Encoder()
 	id := identifier.NewUUIDProvider()
 	hasher := hasher.NewHasher32()
 	valid := validator.NewValidator()
+
+	confServer := config.NewConfigServer()
+	if err := confServer.Load("app-conf.yaml"); err != nil {
+		log.Fatalf(err.Error())
+	}
+	log.LoadConfig(confServer.GetLoggerConfig())
+
+	userStorage := memory.NewUserStorage()
+	urlStorage := memory.NewURLStorage()
+
 
 	App := app.Services{
 		URLService: &app.URLService{
@@ -54,17 +63,18 @@ func main() {
 		},
 	}
 
-	httpServer := transport.NewHTTPServer(&App, log, id, tp)
+	httpServer := transport.NewHTTPServer(
+		confServer.GetServerConfig(), &App, log, id, tp)
 
 	go func() {
 		err := httpServer.ListenAndServe()
-		if err != http.ErrServerClosed {
+		if !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("http server error: %v", err)
 		}
 	}()
 
 	<-exit
-	
+
 	log.Infof("got shutdown signal, shutting down server...")
 
 	_ = httpServer.Shutdown(context.Background())
