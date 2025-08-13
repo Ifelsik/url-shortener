@@ -44,7 +44,7 @@ func (m *LoggingMiddleware) Middleware(next http.Handler) http.Handler {
 
 		m.log.WithFields(logger.LoggerFields{
 			"elapsed": elapsedTime,
-			"code":  srw.Status,
+			"code":    srw.Status,
 		}).Infof("request served")
 	})
 }

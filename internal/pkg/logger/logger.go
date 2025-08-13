@@ -51,6 +51,6 @@ func FromContext(ctx context.Context) (Logger, error) {
 	if logger == nil || !ok {
 		return nil, ErrNoLoggerInCtx
 	}
-	
+
 	return logger, nil
 }

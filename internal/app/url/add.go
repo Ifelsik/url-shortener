@@ -12,7 +12,6 @@ import (
 	"github.com/Ifelsik/url-shortener/internal/pkg/hasher"
 	"github.com/Ifelsik/url-shortener/internal/pkg/timing"
 	"github.com/Ifelsik/url-shortener/internal/pkg/validator"
-
 )
 
 type AddURLRequest struct {

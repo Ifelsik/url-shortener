@@ -36,7 +36,7 @@ func NewAddUser(userRepo user.UserRepository, timing timing.Timing) *addUser {
 func (a *addUser) Handle(
 	ctx context.Context,
 	request *AddUserRequest,
-	) (*AddUserResponse, error) {
+) (*AddUserResponse, error) {
 	existentUser, err := a.userRepo.GetByToken(ctx, request.UserToken)
 	if err == nil {
 		return &AddUserResponse{UserToken: existentUser.Token}, nil

@@ -45,7 +45,6 @@ func main() {
 	userStorage := memory.NewUserStorage()
 	urlStorage := memory.NewURLStorage()
 
-
 	App := app.Services{
 		URLService: &app.URLService{
 			AddURL: appUrl.NewAddURL(

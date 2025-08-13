@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/Ifelsik/url-shortener/internal/app"
@@ -36,9 +37,9 @@ func (h *URLHandlers) AddShortURL(w http.ResponseWriter, r *http.Request) {
 	var body bytes.Buffer
 	_, err = body.ReadFrom(r.Body)
 
-	defer func(){ 
-			_ = r.Body.Close() 
-		}()
+	defer func() {
+		_ = r.Body.Close()
+	}()
 
 	if err != nil {
 		h.logger.Errorf("AddShortURL http handler: %v", err)
@@ -135,7 +136,12 @@ func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
 	}
 	getOriginalURLResp, err :=
 		h.urlService.GetByShort.Handle(r.Context(), getOriginalURLReq)
-	if err != nil {
+	if errors.Is(err, url.ErrNotFound) {
+		h.logger.Errorf("GetOriginalURL http handler: %v", url.ErrNotFound)
+		w.WriteHeader(http.StatusNotFound)
+
+		return
+	} else if err != nil {
 		h.logger.Errorf("GetOriginalURL http handler: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 
@@ -161,7 +167,7 @@ func (h *URLHandlers) GetOriginalURL(w http.ResponseWriter, r *http.Request) {
 	if _, err = w.Write(responseJSON); err != nil {
 		h.logger.Errorf("GetOriginalURL http handler: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		
+
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

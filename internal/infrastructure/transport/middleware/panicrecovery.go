@@ -21,10 +21,9 @@ func (p *PanicRecoveryMiddleware) Middleware(handler http.Handler) http.Handler 
 		defer func() {
 			if err := recover(); err != nil {
 				p.log.Errorf("Panic recovered: %v", err)
-				w.WriteHeader(http.StatusInternalServerError)
 
 				buf := make([]byte, 1024)
-				
+
 				n := runtime.Stack(buf, false)
 				for n == len(buf) {
 					buf = make([]byte, len(buf)*2)

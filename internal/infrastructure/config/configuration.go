@@ -93,7 +93,7 @@ func (c *configServer) GetDatabaseConfig() Database {
 	return c.config.Database
 }
 
-func (c *configServer) GetLoggerConfig() logger.LoggerConfig {	
+func (c *configServer) GetLoggerConfig() logger.LoggerConfig {
 	var level uint8
 	switch c.config.Logger.Level {
 	case "error":
@@ -107,7 +107,7 @@ func (c *configServer) GetLoggerConfig() logger.LoggerConfig {
 	default:
 		level = logger.LevelInfo
 	}
-	
+
 	var formatter uint8
 	switch c.config.Logger.Formatter {
 	case "text":
@@ -117,12 +117,12 @@ func (c *configServer) GetLoggerConfig() logger.LoggerConfig {
 	default:
 		formatter = logger.TextFormatter
 	}
-	
+
 	logConf := logger.LoggerConfig{
 		Level:      level,
 		Formatter:  formatter,
 		ShowCaller: c.config.Logger.ShowCaller,
 	}
 
-	return  logConf
+	return logConf
 }
