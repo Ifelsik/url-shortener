@@ -15,4 +15,4 @@ WORKDIR /url-shortener
 
 COPY --from=build /usr/src/url-shortener/main .
 
-CMD ["./main"]
+ENTRYPOINT ["./main"]

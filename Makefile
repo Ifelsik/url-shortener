@@ -1,3 +1,5 @@
+.PHONY: run format lint mockery test
+
 run:
 	go run ./cmd/main.go
 
@@ -7,3 +9,10 @@ format:
 
 lint:
 	golangci-lint run
+
+mock:
+	mockery
+
+test:
+	gotestsum --format pkgname
+
