@@ -19,3 +19,11 @@ packages:
     config:
       all: true
       recursive: true
+  github.com/Ifelsik/url-shortener/internal/pkg:
+    config:
+      all: true
+      recursive: true
+  github.com/Ifelsik/url-shortener/internal/domain:
+    config:
+      all: true
+      recursive: true

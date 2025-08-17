@@ -58,7 +58,7 @@ func main() {
 			GetByShort: appUrl.NewGetURLByShortKey(urlStorage, valid),
 		},
 		UserService: &app.UserService{
-			AddUser: appUser.NewAddUser(userStorage, tp),
+			AddUser: appUser.NewAddUser(userStorage, tp, id),
 		},
 	}
 

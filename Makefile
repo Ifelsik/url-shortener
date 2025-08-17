@@ -14,5 +14,9 @@ mock:
 	mockery
 
 test:
-	gotestsum --format pkgname
+	gotestsum --format pkgname -- -race -coverprofile=test-cover.temp.out ./...
+	touch test-cover.out
+	grep -v "mock" test-cover.temp.out >> test-cover.out
+	go tool cover -func test-cover.out
+	rm test-cover.temp.out test-cover.out
 
