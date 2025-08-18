@@ -24,7 +24,6 @@ func Test_addUser_Handle(t *testing.T) {
 		want    *user.AddUserResponse
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "Should add new user and return user token",
 			arrange: func(t *testing.T) *user.AddUserProvider {
@@ -73,6 +72,9 @@ func Test_addUser_Handle(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		// {
+		// 	name: "Should return "
+		// },
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

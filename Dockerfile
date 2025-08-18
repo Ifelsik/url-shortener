@@ -13,6 +13,8 @@ FROM alpine:3.22
 
 WORKDIR /url-shortener
 
-COPY --from=build /usr/src/url-shortener/main .
+COPY --from=build /usr/src/url-shortener/main \
+    /usr/src/url-shortener/.env \
+    /usr/src/url-shortener/app-conf.yaml ./
 
 ENTRYPOINT ["./main"]

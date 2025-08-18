@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/Ifelsik/url-shortener/internal/app"
@@ -33,18 +32,14 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tokenCookie, err := r.Cookie(UserTokenCookie)
-	if err != nil && !errors.Is(err, http.ErrNoCookie) {
+	if err != nil {
 		h.log.Debugf("AddUser http handler: %w", err)
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
 	}
 
-	var tokenValue string
-	if tokenCookie != nil {
-		// Have cookie so update it
-		tokenValue = tokenCookie.Value
-	}
+	var tokenValue = tokenCookie.Value
 	h.log.Debugf("AddUser http handler: creating new user")
 	user, err := h.userService.AddUser.Handle(
 		r.Context(),

@@ -2,6 +2,7 @@ package transport
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -34,6 +35,7 @@ func NewHTTPServer(
 
 	return &HTTPServer{
 		srv: &http.Server{
+			Addr:              fmt.Sprintf("%s:%s", conf.Host, conf.Port),
 			Handler:           mux,
 			ReadHeaderTimeout: 5 * time.Second,
 		},

@@ -18,3 +18,4 @@ linters:
       - path-except: _test\.go
         linters:
           - forbidigo
+          - containedctx
