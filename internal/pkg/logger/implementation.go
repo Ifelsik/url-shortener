@@ -8,6 +8,7 @@ import (
 )
 
 // Used as default.
+//
 //nolint:gochecknoglobals
 var stdLoggerConfig = LoggerConfig{
 	Formatter:  TextFormatter,
@@ -30,7 +31,7 @@ func configureLogger(conf *LoggerConfig) *LogrusLogWrap {
 			PadLevelText:           true,
 		},
 	)
-	
+
 	var level logrus.Level
 	switch conf.Level {
 	case LevelError:
@@ -45,14 +46,14 @@ func configureLogger(conf *LoggerConfig) *LogrusLogWrap {
 		level = logrus.InfoLevel
 	}
 	l.SetLevel(level)
-	
+
 	// Need to set custom report caller
 	// because usage of default Report caller
 	// will show information about wrapping function
 	l.ReportCaller = false
 
 	return &LogrusLogWrap{
-		log: logrus.NewEntry(l),
+		log:  logrus.NewEntry(l),
 		conf: conf,
 	}
 }
@@ -120,6 +121,11 @@ func (l *LogrusLogWrap) withCaller() *logrus.Entry {
 		})
 	}
 	l.log.Warningln("LogrusLogWrap: unable to get caller info")
-	
+
 	return l.log
+}
+
+func (l *LogrusLogWrap) LoadConfig(conf LoggerConfig) {
+	l.conf = &conf
+	// TODO: refactor code in logger
 }

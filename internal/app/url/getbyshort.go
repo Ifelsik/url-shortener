@@ -2,6 +2,7 @@ package url
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/Ifelsik/url-shortener/internal/domain/url"
@@ -34,23 +35,25 @@ func NewGetURLByShortKey(urlRepo url.URLRepository, val validator.Validator) *ge
 func (g *getURLByShort) Handle(ctx context.Context,
 	request *GetURLByShortRequest) (*GetURLByShortResponse, error) {
 	if request == nil {
-		return nil, ErrEmptyRequest // strange error
+		return nil, fmt.Errorf("get url by short key: %w", ErrEmptyRequest)
 	}
 
-	err := g.val.ValidateStruct(request);
+	err := g.val.ValidateStruct(request)
 	if err != nil {
 		return nil, fmt.Errorf("get url by short key: %w", err)
 	}
 
 	var shortKeyURL = request.ShortKey
-	url, err := g.urlRepo.GetByShortKey(ctx, shortKeyURL)
-	if err != nil {
+	originalURL, err := g.urlRepo.GetByShortKey(ctx, shortKeyURL)
+	if errors.Is(err, url.ErrNoURL) {
+		return nil, fmt.Errorf("get url by short key: %w", ErrNotFound)
+	} else if err != nil {
 		return nil, fmt.Errorf("get url by short key: %w", err)
 	}
 
 	result := &GetURLByShortResponse{
-		ShortURL:    url.ShortKey,
-		OriginalURL: url.OriginalURL,
+		ShortURL:    originalURL.ShortKey,
+		OriginalURL: originalURL.OriginalURL,
 	}
 
 	return result, nil

@@ -9,8 +9,8 @@ import (
 )
 
 type UserHandlers struct {
-	log          logger.Logger
-	userService  *app.UserService
+	log         logger.Logger
+	userService *app.UserService
 }
 
 func NewUserHandlers(
@@ -18,13 +18,13 @@ func NewUserHandlers(
 	logger logger.Logger,
 ) *UserHandlers {
 	return &UserHandlers{
-		log:          logger,
-		userService:  userService,
+		log:         logger,
+		userService: userService,
 	}
 }
 
 func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
-	log, err := logger.FromContext(r.Context()) 
+	log, err := logger.FromContext(r.Context())
 	if err == nil {
 		h.log = log
 	} else {
@@ -35,24 +35,27 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.log.Debugf("AddUser http handler: %w", err)
 		w.WriteHeader(http.StatusBadRequest)
+
+		return
 	}
 
+	var tokenValue = tokenCookie.Value
 	h.log.Debugf("AddUser http handler: creating new user")
 	user, err := h.userService.AddUser.Handle(
 		r.Context(),
 		&user.AddUserRequest{
-			UserToken: tokenCookie.Value,
+			UserToken: tokenValue,
 		},
 	)
 	if err != nil {
 		h.log.Errorf("AddUser http handler: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		
+
 		return
 	}
 
 	h.log.Debugf("AddUser http handler: forming cookie")
-	userTokenCookie := &http.Cookie{
+	userCookie := &http.Cookie{
 		Name:     UserTokenCookie,
 		Value:    user.UserToken,
 		HttpOnly: true,
@@ -60,6 +63,6 @@ func (h *UserHandlers) AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.log.Debugf("AddUser http handler: setting cookie")
-	http.SetCookie(w, userTokenCookie)
+	http.SetCookie(w, userCookie)
 	w.WriteHeader(http.StatusCreated)
 }

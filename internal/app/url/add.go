@@ -12,7 +12,6 @@ import (
 	"github.com/Ifelsik/url-shortener/internal/pkg/hasher"
 	"github.com/Ifelsik/url-shortener/internal/pkg/timing"
 	"github.com/Ifelsik/url-shortener/internal/pkg/validator"
-
 )
 
 type AddURLRequest struct {
@@ -29,7 +28,7 @@ type AddURL interface {
 	Handle(ctx context.Context, request *AddURLRequest) (*AddURLResponse, error)
 }
 
-type addURL struct {
+type AddURLProvider struct {
 	urlRepo        url.URLRepository
 	userRepo       user.UserRepository
 	timingProvider timing.Timing
@@ -45,8 +44,8 @@ func NewAddURL(
 	base62Provider base62.Base62Provider,
 	hasher hasher.Hasher,
 	validationProvider validator.Validator,
-) *addURL {
-	return &addURL{
+) *AddURLProvider {
+	return &AddURLProvider{
 		urlRepo:        addURLRepo,
 		userRepo:       addUserRepo,
 		timingProvider: timingProvider,
@@ -56,7 +55,7 @@ func NewAddURL(
 	}
 }
 
-func (a *addURL) Handle(ctx context.Context,
+func (a *AddURLProvider) Handle(ctx context.Context,
 	request *AddURLRequest) (*AddURLResponse, error) {
 	if request == nil {
 		return nil, ErrEmptyRequest

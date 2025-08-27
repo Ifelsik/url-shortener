@@ -23,21 +23,24 @@ type AddUser interface {
 	Handle(ctx context.Context, request *AddUserRequest) (*AddUserResponse, error)
 }
 
-type addUser struct {
+type AddUserProvider struct {
 	userRepo   user.UserRepository
 	timing     timing.Timing
 	identifier identifier.Identifier
 }
 
-func NewAddUser(userRepo user.UserRepository, timing timing.Timing) *addUser {
-	return &addUser{userRepo: userRepo, timing: timing, identifier: identifier.NewUUIDProvider()}
-	return &addUser{userRepo: userRepo, timing: timing, identifier: identifier.NewUUIDProvider()}
+func NewAddUser(
+	userRepo user.UserRepository,
+	timing timing.Timing,
+	identifier identifier.Identifier,
+	) *AddUserProvider {
+	return &AddUserProvider{userRepo: userRepo, timing: timing, identifier: identifier}
 }
 
-func (a *addUser) Handle(
+func (a *AddUserProvider) Handle(
 	ctx context.Context,
 	request *AddUserRequest,
-	) (*AddUserResponse, error) {
+) (*AddUserResponse, error) {
 	existentUser, err := a.userRepo.GetByToken(ctx, request.UserToken)
 	if err == nil {
 		return &AddUserResponse{UserToken: existentUser.Token}, nil
@@ -48,7 +51,7 @@ func (a *addUser) Handle(
 		&user.User{
 			Token:     a.identifier.String(),
 			CreatedAt: a.timing.Now(),
-			ExpiresAt: a.timing.Now().Add(30 * 24 * time.Hour),
+			ExpiresAt: a.timing.AfterNow(30 * 24 * time.Hour),
 		},
 	)
 

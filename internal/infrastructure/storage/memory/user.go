@@ -35,10 +35,10 @@ func (s *userStorage) Add(ctx context.Context,
 
 func (s *userStorage) GetByToken(ctx context.Context,
 	token string) (*user.User, error) {
-	user, ok := s.users[token]
+	u, ok := s.users[token]
 	if !ok {
-		return nil, ErrNoUser
+		return nil, user.ErrNoUser
 	}
 
-	return user, nil
+	return u, nil
 }
